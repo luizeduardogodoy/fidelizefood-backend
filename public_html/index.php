@@ -26,7 +26,8 @@ if($idx->getPostResponse("req") == "login"){
 	
 	print json_encode($dados);
 
-	exit;
+	exit; 
+	//comitado via actuary
 }
 
 if($idx->getPostResponse("req") == "cadastrouser"){
