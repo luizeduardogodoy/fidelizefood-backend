@@ -53,6 +53,8 @@ if($idx->getPostResponse("req") == "cadastrouser"){
 	exit;
 }
 
+echo "a";
+
 /*
 $user = new User();
 
