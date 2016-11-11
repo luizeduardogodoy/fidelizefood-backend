@@ -1,7 +1,7 @@
 <?php
 
-include("../../../../Library/adodb5/adodb.inc.php");
-include("../../../../Library/adodb5/adodb-active-record.inc.php");
+include("../vendor/adodb/adodb-php/adodb.inc.php");
+include("../vendor/adodb/adodb-php/adodb-active-record.inc.php");
 
 try{
 
