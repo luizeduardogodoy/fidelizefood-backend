@@ -3,7 +3,7 @@
 require "../config/autoload.php";
 require "../config/connect.php";
 
-use FidelizeFood\Entity\User;
+use FidelizeFood\Entity\Usuario;
 use FidelizeFood\Controller\IndexController;
 
 $idx = new IndexController();
@@ -12,7 +12,7 @@ if($idx->getPostResponse("req") == "login"){
 
 	$dados = ["user" => $idx->getPostResponse("user"), "status" => "!ok"];
 
-	$usu = new User();
+	$usu = new Usuario();
 	
 	if($usu->Load("email = '" . $idx->getPostResponse("user")  . "'")){
 
@@ -34,7 +34,7 @@ if($idx->getPostResponse("req") == "cadastrouser"){
 	
 	$dados = [];
 	
-	$user = new User();
+	$user = new Usuario();
 	
 	$user->idusuario = $user->lastInsertID($db, "idUsuario") + 1;
 	$user->nome = $idx->getPostResponse("name");
