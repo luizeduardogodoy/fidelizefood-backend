@@ -8,6 +8,9 @@ use FidelizeFood\Controller\IndexController;
 
 $idx = new IndexController();
 
+$usario = new Usuario();
+
+
 if($idx->getPostResponse("req") == "login"){
 
 	$dados = ["user" => $idx->getPostResponse("user"), "status" => "!ok"];
@@ -31,18 +34,9 @@ if($idx->getPostResponse("req") == "login"){
 }
 
 if($idx->getPostResponse("req") == "cadastrouser"){
+		
 	
-	$dados = [];
-	
-	$user = new Usuario();
-	
-	$user->idusuario = $user->lastInsertID($db, "idUsuario") + 1;
-	$user->nome = $idx->getPostResponse("name");
-	$user->email = $idx->getPostResponse("email");
-	$user->tipo = $idx->getPostResponse("tipo");
-	$user->senha = $idx->getPostResponse("pass");	
-	
-	if($user->Save()){
+	if($idx->createUser()){
 		$dados = ["status" => "ok"];		
 	}
 	else
@@ -52,8 +46,6 @@ if($idx->getPostResponse("req") == "cadastrouser"){
 
 	exit;
 }
-
-echo "a";
 
 /*
 $user = new User();

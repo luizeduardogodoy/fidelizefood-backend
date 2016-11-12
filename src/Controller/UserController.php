@@ -9,9 +9,9 @@ class UserController extends Controller{
 		echo "its work!";
 	}
 
-  public function createUser(){
-
-  }
+    public function createUser(){
+    
+    }
 
 
 
