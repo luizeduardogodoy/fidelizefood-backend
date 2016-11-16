@@ -22,6 +22,7 @@ class IndexController extends Controller{
 		$user->email = $this->getPostResponse("email");
 		$user->tipo = $this->getPostResponse("tipo");
 		$user->senha = $this->getPostResponse("pass");
+		$user->datacriacao = Date("Y-m-d");
 		
 		if($user->Save()){
 		
