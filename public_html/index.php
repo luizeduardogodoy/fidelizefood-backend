@@ -10,7 +10,7 @@ $idx = new IndexController();
 
 $usario = new Usuario();
 
-
+/*****LOGIN****/
 if($idx->getPostResponse("req") == "login"){
 
 	$dados = ["user" => $idx->getPostResponse("user"), "status" => "!ok"];
@@ -24,6 +24,7 @@ if($idx->getPostResponse("req") == "login"){
 			
 			$dados["nome"] = $usu->nome;
 			$dados["tipo"] = $usu->tipo;
+			$dados["id"] = $usu->idusuario;
 		}		
 	}
 	
@@ -33,8 +34,22 @@ if($idx->getPostResponse("req") == "login"){
 	//comitado via actuary
 }
 
+/***CADASTRO USER***/
+
 if($idx->getPostResponse("req") == "cadastrouser"){
-		
+	
+	if($idx->createUser()){
+		$dados = ["status" => "ok"];		
+	}
+	else
+		$dados = ["status" => "!ok"];	
+
+	print json_encode($dados);
+
+	exit;
+}
+
+if($idx->getPostResponse("req") == "consultarestaurante"){
 	
 	if($idx->createUser()){
 		$dados = ["status" => "ok"];		
