@@ -49,9 +49,17 @@ if($idx->getPostResponse("req") == "cadastrouser"){
 	exit;
 }
 
+/*Verifica se o user logado ja tem restaurante informado, isso so vale para user do tipo == 2*/
+
 if($idx->getPostResponse("req") == "consultarestaurante"){
 	
-	if($idx->createUser()){
+	$sql =  "SELECT * FROM restaurante a ";
+	$sql .= "INNER JOIN usuario b ON a.usuario_idusuario = b.idusuario ";
+	$sql .= "WHERE usuario_idusuario = " . $_POST["user_id"] . " AND b.tipo = 2 ";
+	
+	$res = $db->Execute($sql);
+	
+	if(!$res->EOF){
 		$dados = ["status" => "ok"];		
 	}
 	else
