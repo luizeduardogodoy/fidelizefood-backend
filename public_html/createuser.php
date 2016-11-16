@@ -19,3 +19,4 @@ if(isset($_POST["createUser"]) && $_POST["createUser"] ==  "001"){
   echo "nao é possivel criar o user";
 }
 
+echo "banana";
