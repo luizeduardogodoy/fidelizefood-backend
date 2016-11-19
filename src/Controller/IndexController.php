@@ -2,11 +2,12 @@
 
 namespace FidelizeFood\Controller;
 use FidelizeFood\Entity\Usuario;
+use FidelizeFood\Entity\Restaurante;
 
 class IndexController extends Controller{
 
 	public function __construct(){
-
+		
 	}
 
 	/**
@@ -38,7 +39,7 @@ class IndexController extends Controller{
 
 		$restaurante = new Restaurante();
 
-		$restaurante->idRestaurante = $restaurante->lastInsertID($restaurante->getConn(), "idRestaurante") + 1;
+		$restaurante->idRestaurante = $restaurante->nextId();
 		$restaurante->nome = $this->getPostResponse("name");
 		$restaurante->cnpj = $this->getPostResponse("cnpj");
 		$restaurante->estado = $this->getPostResponse("state");
