@@ -3,10 +3,12 @@
 namespace FidelizeFood\Entity;
 
 class Usuario extends FFADO{
-
+	
 	var $_table = "usuario";	
 	
 	public function __construct(){
+			
+		$this->nameId = "idusuario";
 		
 		parent::__construct();
 	}
@@ -35,4 +37,6 @@ class Usuario extends FFADO{
 
 		return $this->nome;
 	}
+	
+	
 }

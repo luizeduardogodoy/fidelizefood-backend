@@ -10,8 +10,14 @@ abstract class Controller{
 	}
 
 	public function getPostResponse($key = ""){
-  
-		return $key != "" ? $_POST[$key] : $_POST;
+		
+		if($key != ""){
+			
+			if(isset($_POST[$key]))
+				return $_POST[$key];
+		}
+		
+		return $_POST;
 	}
 
 	public function getGetResponse($extract = false){

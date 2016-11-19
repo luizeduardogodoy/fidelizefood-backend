@@ -6,7 +6,7 @@ abstract class FFADO extends \ADOdb_Active_Record{
 	
 	protected $conn = null;
 	
-	private $nameId = "";
+	protected $nameId = "";
 	
 	public function __construct(){
 		global $db;
@@ -55,6 +55,12 @@ abstract class FFADO extends \ADOdb_Active_Record{
 		$res = $db->Execute($sql);
 		
 		return $res->fields("last_id");
-		
 	}
+	
+	public function nextId(){
+		global $db;
+		
+		return $this->lastInsertID($db, $this->getNameId()) + 1;
+	}
+	
 }

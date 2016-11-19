@@ -8,8 +8,6 @@ use FidelizeFood\Controller\IndexController;
 
 $idx = new IndexController();
 
-$usario = new Usuario();
-
 /*****LOGIN****/
 if($idx->getPostResponse("req") == "login"){
 

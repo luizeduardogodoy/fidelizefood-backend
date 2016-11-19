@@ -7,7 +7,6 @@ class IndexController extends Controller{
 
 	public function __construct(){
 
-
 	}
 
 	/**
@@ -17,7 +16,7 @@ class IndexController extends Controller{
 		
 		$user = new Usuario();
 		
-		$user->idusuario = $user->lastInsertID($user->getConn(), "idUsuario") + 1;
+		$user->idusuario = $user->nextId();
 		$user->nome = $this->getPostResponse("name");
 		$user->email = $this->getPostResponse("email");
 		$user->tipo = $this->getPostResponse("tipo");
