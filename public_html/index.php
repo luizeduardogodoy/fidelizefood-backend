@@ -60,7 +60,6 @@ if($idx->getPostResponse("req") == "cadastrorestaurant"){
 	exit;
 }
 
-
 /*Verifica se o user logado ja tem restaurante informado, isso so vale para user do tipo == 2*/
 
 if($idx->getPostResponse("req") == "consultarestaurante"){

@@ -39,7 +39,7 @@ class IndexController extends Controller{
 
 		$restaurante = new Restaurante();
 
-		$restaurante->idRestaurante = $restaurante->nextId();
+		$restaurante->idrestaurante = $restaurante->nextId();
 		$restaurante->nome = $this->getPostResponse("name");
 		$restaurante->cnpj = $this->getPostResponse("cnpj");
 		$restaurante->estado = $this->getPostResponse("state");
