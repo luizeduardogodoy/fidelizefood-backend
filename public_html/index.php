@@ -47,6 +47,20 @@ if($idx->getPostResponse("req") == "cadastrouser"){
 	exit;
 }
 
+if($idx->getPostResponse("req") == "cadastrorestaurant"){
+	
+	if($idx->createRestaurant()){
+		$dados = ["status" => "ok"];		
+	}
+	else
+		$dados = ["status" => "!ok"];	
+
+	print json_encode($dados);
+
+	exit;
+}
+
+
 /*Verifica se o user logado ja tem restaurante informado, isso so vale para user do tipo == 2*/
 
 if($idx->getPostResponse("req") == "consultarestaurante"){

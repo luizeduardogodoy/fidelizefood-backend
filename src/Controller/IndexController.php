@@ -31,4 +31,28 @@ class IndexController extends Controller{
 		
 	}
 	
+	/**
+  * 
+  */
+	public function createRestaurant(){
+
+		$restaurante = new Restaurante();
+
+		$restaurante->idRestaurante = $restaurante->lastInsertID($restaurante->getConn(), "idRestaurante") + 1;
+		$restaurante->nome = $this->getPostResponse("name");
+		$restaurante->cnpj = $this->getPostResponse("cnpj");
+		$restaurante->estado = $this->getPostResponse("state");
+		$restaurante->cidade = $this->getPostResponse("city");
+		$restaurante->endereco = $this->getPostResponse("address");
+		$restaurante->telefone = $this->getPostResponse("phone");
+		$restaurante->usuario_idusuario = $this->getPostResponse("idusuario");
+
+		if($restaurante->Save()){
+
+			return $restaurante;
+		}
+		return false;
+
+	}
+	
 }
