@@ -81,21 +81,21 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 	exit;
 }
 
-/*
-$user = new User();
+if($idx->getPostResponse("req") == "listausers"){
+	
+	
+	$sql = "SELECT * FROM usuario ORDER BY nome LIMIT 10";
+	$res = $db->Execute($sql);
+	
+	
+	while(!$res->EOF){
+		
+		$dados[] = ["nome"  => $res->fields("nome"), "email" => $res->fields("email"), "senha" => $res->fields("senha")] ;
+		
+		$res->MoveNext();
+	}
 
-//$user->iduserente = $conn->nextId("");
-$user->nome = substr(md5(rand(1,99)),0,10);
-$user->sobrenome = substr(md5(rand(25,50)),0,10);
-$user->idade = rand(1,50);
-
-$sexo = rand(0,1);
-$user->sexo = $sexo == 0 ? "F" : "M";
-$user->estado = "PR";
-$user->Save();
-
-var_dump($user->getListaUsers());
-
-$ctrl = new IndexController();
-
-var_dump($ctrl->getGetResponse());*/
+	print json_encode($dados);
+	
+	exit;
+}
