@@ -84,7 +84,7 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 if($idx->getPostResponse("req") == "listausers"){
 	
 	
-	$sql = "SELECT * FROM usuario ORDER BY nome LIMIT 10";
+	$sql = "SELECT * FROM usuario ORDER BY nome LIMIT 100";
 	$res = $db->Execute($sql);
 	
 	
