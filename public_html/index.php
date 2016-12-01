@@ -13,6 +13,7 @@ use FidelizeFood\Controller\IndexController;
 
 $idx = new IndexController();
 
+
 $_SESSION["NameAPP"] = "fidelizefood";
 
 //se não existe usuário setado na sessão
