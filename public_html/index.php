@@ -124,9 +124,9 @@ if($idx->getPostResponse("req") == "carimbo"){
 	
 	$dados = ["status" => "!ok"];	
 	
-	//verifica se existe o cliente informado
+	//verifica se existe o cliente informado, aqui também verifica se o usuário é do tipo 1 = Consumidor
 	$cliente = new Usuario();
-	if(!$cliente->Load('idusuario = ' . $idx->getPostResponse("idusercliente"))){
+	if(!$cliente->Load('idusuario = ' . $idx->getPostResponse("idusercliente") . " AND tipo = 1 ")){
 		
 		$dados["mensagem"] = "Cliente não encontrado";
 	
