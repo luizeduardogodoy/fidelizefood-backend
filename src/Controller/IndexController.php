@@ -3,6 +3,7 @@
 namespace FidelizeFood\Controller;
 use FidelizeFood\Entity\Usuario;
 use FidelizeFood\Entity\Restaurante;
+use FidelizeFood\Entity\RestauranteCampanha;
 
 class IndexController extends Controller{
 
@@ -33,8 +34,8 @@ class IndexController extends Controller{
 	}
 	
 	/**
-  * 
-  */
+	 * 
+	 */
 	public function createRestaurant(){
 
 		$restaurante = new Restaurante();
@@ -51,6 +52,29 @@ class IndexController extends Controller{
 		if($restaurante->Save()){
 
 			return $restaurante;
+		}
+		return false;
+
+	}
+	
+	/**
+	 * 
+	 */
+	public function createRestauranteCampanha(){
+
+		$campanha = new RestauranteCampanha();
+
+		$campanha->idcampanha = $campanha->nextId();
+		//$campanha->nomeCampanha = $this->getPostResponse("nomeCampanha");
+		$campanha->dataInicio = $this->getPostResponse("dtInicio");
+		$campanha->dataFinal = $this->getPostResponse("dtFim");
+		$campanha->qtde = $this->getPostResponse("qtd");
+		$campanha->observacao = $this->getPostResponse("obs");
+		$campanha->restaurante_idrestaurante = $this->getPostResponse("idRestaurante");
+
+		if($campanha->Save()){
+
+			return $campanha;
 		}
 		return false;
 
