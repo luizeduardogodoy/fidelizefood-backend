@@ -8,9 +8,11 @@ use FidelizeFood\Entity\Usuario;
 use FidelizeFood\Entity\UsuarioCampanha;
 use FidelizeFood\Entity\UsuarioCampanhaItem;
 use FidelizeFood\Entity\Restaurante;
+use FidelizeFood\Entity\RestauranteCampanha;
 use FidelizeFood\Controller\IndexController;
 
 $idx = new IndexController();
+
 
 $_SESSION["NameAPP"] = "fidelizefood";
 
@@ -70,9 +72,24 @@ if($idx->getPostResponse("req") == "cadastrouser"){
 	exit;
 }
 
+/***CADASTRO RESTAURANTE***/
 if($idx->getPostResponse("req") == "cadastrorestaurant"){
 	
 	if($idx->createRestaurant()){
+		$dados = ["status" => "ok"];		
+	}
+	else
+		$dados = ["status" => "!ok"];	
+
+	print json_encode($dados);
+
+	exit;
+}
+
+/***CADASTRO RESTAURANTE CAMPANHA***/
+if($idx->getPostResponse("req") == "cadastrocampanha"){
+	
+	if($idx->createRestauranteCampanha()){
 		$dados = ["status" => "ok"];		
 	}
 	else
