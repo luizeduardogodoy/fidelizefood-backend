@@ -48,6 +48,7 @@ if($idx->getPostResponse("req") == "login"){
 			$_SESSION['LAST'] = time();
 			$_SESSION['UsuarioID'] = $usu->idusuario;
 			$_SESSION['UsuarioTipo'] = $usu->tipo;
+			
 		}		
 	}
 		
@@ -141,7 +142,7 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 	exit;
 }
 
-if($idx->getPostResponse("req") == "listausers"){
+/*if($idx->getPostResponse("req") == "listausers"){
 	
 	$sql = "SELECT * FROM usuario ORDER BY nome LIMIT 100";
 	$res = $db->Execute($sql);
@@ -156,8 +157,10 @@ if($idx->getPostResponse("req") == "listausers"){
 	print json_encode($dados);
 	
 	exit;
-}
+}*/
 
+
+/*REGISTRA A REFEIÇÃO*/
 if($idx->getPostResponse("req") == "carimbo"){
 	
 	$dados = ["status" => "!ok"];	
@@ -242,6 +245,50 @@ if($idx->getPostResponse("req") == "carimbo"){
 	
 	print json_encode($dados);
 	exit;
+}
+
+
+if($idx->getPostResponse("req") == "listarestativos"){
+	
+	$sql = "SELECT a.idusuariocampanha, b.nome, c.datainicial, c.datafinal, c.qtde, count(*) AS refeicoes, max(d.data) AS ultima FROM usuariocampanha a
+				INNER JOIN restaurante b ON b.idrestaurante = a.idrestaurantefk
+				INNER JOIN campanha c ON c.idcampanha = a.idcampanhafk
+				INNER JOIN usuariocampanhaitem d ON a.idusuariocampanha = d.idusuariocampanhafk
+				WHERE idusuariofk = " . $_SESSION["UsuarioID"] . " AND utilizado IS NULL				
+				GROUP BY  a.idusuariocampanha 
+				ORDER BY a.idusuariocampanha";
+	
+	
+		$res = $db->Execute($sql);
+	
+		if($res){
+			while(!$res->EOF){
+				
+				list($ano, $mes, $dia) = explode("-", $res->fields("ultima"));
+				$ultima = $dia . "/" . $mes . "/" . $ano;
+				
+				$dados["registros"][] = array("nomeRest" => $res->fields("nome"),
+														"qtde" => $res->fields("qtde"),  
+														"refeicoes" => $res->fields("refeicoes"), 
+														"ultima" => $ultima);				
+				
+				$res->MoveNext();
+			}
+			
+			$dados["status"] = "ok";
+		}
+	
+		else{
+			
+			$dados["status"] = "!ok";
+			
+		}
+	
+
+	
+	print json_encode($dados);
+	exit;
+	
 }
 
 //var_dump($_SESSION);
