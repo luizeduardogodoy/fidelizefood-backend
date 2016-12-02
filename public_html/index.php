@@ -89,16 +89,37 @@ if($idx->getPostResponse("req") == "cadastrorestaurant"){
 /***CADASTRO RESTAURANTE CAMPANHA***/
 if($idx->getPostResponse("req") == "cadastrocampanha"){
 	
-	if($idx->createRestauranteCampanha()){
-		$dados = ["status" => "ok"];		
+	/*pega o restaurante*/
+	
+	$rest = new Restaurante();
+	if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
+		print $dados = ["status" => "!restaurante"];		
+		exit;
 	}
-	else
-		$dados = ["status" => "!ok"];	
-
+	
+	try{
+		$restcam = new RestauranteCampanha();
+			
+		$restcam->idcampanha = $restcam->nextId();
+		$restcam->nomecampanha = $idx->getPostResponse("nomeCampanha");
+		$restcam->datainicial = $idx->getPostResponse("dtInicio");
+		$restcam->datafinal = $idx->getPostResponse("dtFim");
+		$restcam->qtde = $idx->getPostResponse("qtd");
+		$restcam->observacao = $idx->getPostResponse("obs");
+		$restcam->restaurante_idrestaurante = $rest->idrestaurante;
+		
+		$restcam->Save();
+		
+		$dados = ["status" => "ok"];	
+	}
+	catch(Exception $e){
+		$dados["status"] = "!ok";
+	}
+	
 	print json_encode($dados);
-
 	exit;
 }
+
 
 /*Verifica se o user logado ja tem restaurante informado, isso so vale para user do tipo == 2*/
 

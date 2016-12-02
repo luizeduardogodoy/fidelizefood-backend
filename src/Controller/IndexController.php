@@ -66,7 +66,7 @@ class IndexController extends Controller{
 		$campanha = new RestauranteCampanha();
 
 		$campanha->idcampanha = $campanha->nextId();
-		//$campanha->nomeCampanha = $this->getPostResponse("nomeCampanha");
+		$campanha->nomeCampanha = $this->getPostResponse("nomeCampanha");
 		$campanha->dataInicio = $this->getPostResponse("dtInicio");
 		$campanha->dataFinal = $this->getPostResponse("dtFim");
 		$campanha->qtde = $this->getPostResponse("qtd");
