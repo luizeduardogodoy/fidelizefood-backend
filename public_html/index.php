@@ -121,20 +121,104 @@ if($idx->getPostResponse("req") == "cadastrocampanha"){
 }
 
 
+/* Verifica se ha campanha já cadastrada e quais suas informações */
+if($idx->getPostResponse("req") == "consultacampanha"){
+	
+	// Recuperando informacoes do restaurante
+	$rest = new Restaurante();
+	if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
+		print $dados = ["status" => "!restaurante"];		
+		exit;
+	}
+	
+	// Recuperando informacoes da campanha
+	$restCampanha = new RestauranteCampanha();
+	if(!$restCampanha->Load("restaurante_idrestaurante = " . $rest->idrestaurante)){
+		print $dados = ["status" => "!restauranteCampanha"];		
+		exit;
+	}
+	
+	// iterando no resultado e adicionando as informacoes para retorno via json
+	if(!$restCampanha->EOF){
+		$dados["nomecampanha"] = $restCampanha->nomecampanha;
+		$dados["qtde"] = $restCampanha->qtde;  
+		$dados["observacao"] = $restCampanha->observacao;
+		
+		list($ano, $mes, $dia) = explode("-", $restCampanha->datainicial);
+			$dtini = $dia . "/" . $mes . "/" . $ano;
+				
+		list($ano, $mes, $dia) = explode("-", $restCampanha->datafinal);
+			$dtfim = $dia . "/" . $mes . "/" . $ano;
+			
+		$dados["datainicial"] = $dtini;		
+		$dados["datafinal"] = $dtfim;				
+			
+		$dados["status"] = "ok";
+	}
+
+	else{
+		
+		$dados["status"] = "!ok";
+		
+	}
+		
+	print json_encode($dados);
+	exit;
+	
+	
+	/*$dados = ["status" => "!ok"];	
+	
+	$sql =  "SELECT a.nome, a.cidade, a.estado FROM restaurante a ";
+	$sql .= "INNER JOIN usuario b ON a.usuario_idusuario = b.idusuario ";
+	$sql .= "WHERE usuario_idusuario = " . $_POST["user_id"] . " AND b.tipo = 2 ";
+	
+	$res = $db->Execute($sql);
+	
+	if(!$res->EOF){
+		$dados["nome"] = $res->fields("nome");
+		$dados["cidade"] = $res->fields("cidade");  
+		$dados["estado"] = $res->fields("estado");				
+			
+		$dados["status"] = "ok";
+	}
+
+	else{
+		
+		$dados["status"] = "!ok";
+		
+	}
+		
+	print json_encode($dados);
+	exit;*/
+}
+
 /*Verifica se o user logado ja tem restaurante informado, isso so vale para user do tipo == 2*/
 
 if($idx->getPostResponse("req") == "consultarestaurante"){
 	
 	$dados = ["status" => "!ok"];	
 	
-	$sql =  "SELECT * FROM restaurante a ";
-	$sql .= "INNER JOIN usuario b ON a.usuario_idusuario = b.idusuario ";
-	$sql .= "WHERE usuario_idusuario = " . $_POST["user_id"] . " AND b.tipo = 2 ";
+	// Pega o restaurante
+	$rest = new Restaurante();
+	if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
 	
-	$res = $db->Execute($sql);
+		$dados = ["status" => "!restaurante"];		
 	
-	if(!$res->EOF)
-		$dados = ["status" => "ok"];		
+	} else { 
+	
+		// Recuperando informacoes da campanha
+		$restCampanha = new RestauranteCampanha();
+		if(!$restCampanha->Load("restaurante_idrestaurante = " . $rest->idrestaurante)){
+			
+			$dados = ["status" => "!campanha"];		
+			
+		}else{
+			
+			$dados = ["status" => "ok"];		
+		
+		}
+	
+	}
 	
 	print json_encode($dados);
 
