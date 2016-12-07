@@ -199,14 +199,27 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 	
 	$dados = ["status" => "!ok"];	
 	
-	$sql =  "SELECT * FROM restaurante a ";
-	$sql .= "INNER JOIN usuario b ON a.usuario_idusuario = b.idusuario ";
-	$sql .= "WHERE usuario_idusuario = " . $_POST["user_id"] . " AND b.tipo = 2 ";
+	// Pega o restaurante
+	$rest = new Restaurante();
+	if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
 	
-	$res = $db->Execute($sql);
+		$dados = ["status" => "!restaurante"];		
 	
-	if(!$res->EOF)
-		$dados = ["status" => "ok"];		
+	} else { 
+	
+		// Recuperando informacoes da campanha
+		$restCampanha = new RestauranteCampanha();
+		if(!$restCampanha->Load("restaurante_idrestaurante = " . $rest->idrestaurante)){
+			
+			$dados = ["status" => "!campanha"];		
+			
+		}else{
+			
+			$dados = ["status" => "ok"];		
+		
+		}
+	
+	}
 	
 	print json_encode($dados);
 
