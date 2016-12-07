@@ -2,6 +2,10 @@
 
 namespace FidelizeFood\Entity;
 
+$conn = \ADOdbConnection::getConn();
+
+ADOdb_Active_Record::SetDatabaseAdapter($conn);
+
 abstract class FFADO extends \ADOdb_Active_Record{
 	
 	protected $conn = null;
