@@ -152,11 +152,70 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 			
 		$dados["datainicial"] = $dtini;		
 		$dados["datafinal"] = $dtfim;				
-			
-		$dados["status"] = "ok";
-	}
+		
+		
+		// Recuperando usuarios ativos na campanha
+		$sql = "SELECT a.idCampanhaFK, 
+				   b.nome,
+				   c.nomeCampanha, 
+				   c.datainicial, 
+				   c.datafinal, 
+				   c.qtde, 
+				   count(*) AS refeicoes, 
+				   max(d.data) AS ultima 
+				FROM fidelizefood.usuariocampanha a
+				INNER JOIN fidelizefood.usuario b ON b.idUsuario = a.idUsuarioFK
+				INNER JOIN fidelizefood.campanha c ON c.idcampanha = a.idcampanhafk
+				INNER JOIN fidelizefood.usuariocampanhaitem d ON a.idusuariocampanha = d.idusuariocampanhafk
+				WHERE a.idCampanhaFK = " . $restCampanha->idcampanha . " AND utilizado IS NULL				
+				GROUP BY  a.idusuariocampanha 
+				ORDER BY a.idusuariocampanha";
+	
+		$camativos = \ADOdbConnection::getConn()->Execute($sql);
+	
+		if($camativos){
+			while(!$camativos->EOF){
+				
+				list($ano, $mes, $dia) = explode("-", $camativos->fields("ultima"));
+				$ultima = $dia . "/" . $mes . "/" . $ano;
+				
+				$dados["registrosativos"][] = array("nome" => $camativos->fields("nome"),
+														"qtde" => $camativos->fields("qtde"),  
+														"refeicoes" => $camativos->fields("refeicoes"), 
+														"ultima" => $ultima);				
+				
+				$camativos->MoveNext();
+			}
+		}
+		
+		
+		// Recuperando usuarios premiados com o fidelize
+		$sqlpremiados = "SELECT 
+					b.nome,
+					a.utilizado
+				FROM fidelizefood.usuariocampanha a
+				INNER JOIN fidelizefood.usuario b ON b.idUsuario = a.idUsuarioFK
+				WHERE a.utilizado IS not NULL AND idCampanhaFK = " . $restCampanha->idcampanha . "  
+				ORDER BY b.nome";
+	
+		$campremiados = \ADOdbConnection::getConn()->Execute($sqlpremiados);
+	
+		if($campremiados){
+			while(!$campremiados->EOF){
+				
+				list($ano, $mes, $dia) = explode("-", $campremiados->fields("utilizado"));
+				$ultilizado = $dia . "/" . $mes . "/" . $ano;
+				
+				$dados["registrospremiados"][] = array("nome" => $campremiados->fields("nome"), "utilizado" => $ultilizado);				
+				
+				$campremiados->MoveNext();
+			}
+		}
+		
+		$dados["status"] = "ok";				
 
-	else{
+
+	} else {
 		
 		$dados["status"] = "!ok";
 		
@@ -172,7 +231,7 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 	$sql .= "INNER JOIN usuario b ON a.usuario_idusuario = b.idusuario ";
 	$sql .= "WHERE usuario_idusuario = " . $_POST["user_id"] . " AND b.tipo = 2 ";
 	
-	$res = $db->Execute($sql);
+	$res = \ADOdbConnection::getConn()->Execute($sql);
 	
 	if(!$res->EOF){
 		$dados["nome"] = $res->fields("nome");
@@ -228,7 +287,7 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 /*if($idx->getPostResponse("req") == "listausers"){
 	
 	$sql = "SELECT * FROM usuario ORDER BY nome LIMIT 100";
-	$res = $db->Execute($sql);
+	$res = \ADOdbConnection::getConn()->Execute($sql);
 		
 	while(!$res->EOF){
 		
@@ -274,7 +333,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 	$sql .= "AND datafinal >= '" . Date("Y-m-d") . "' ";
 	$sql .= "AND restaurante_idrestaurante = " . $rest->idrestaurante;
 	
-	$cam = $db->Execute($sql);
+	$cam = \ADOdbConnection::getConn()->Execute($sql);
 	//var_dump($cam);
 	if($cam->EOF){
 		print json_encode(["status" => "!temcampanha"]);
@@ -299,7 +358,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 		}
 		
 		$sql = "SELECT count(*) AS qtde FROM usuariocampanhaitem WHERE idusuariocampanhafk = " . $usucam->idusuariocampanha;
-		$qtde = $db->Execute($sql);
+		$qtde = \ADOdbConnection::getConn()->Execute($sql);
 		
 		//aqui faz a validação para verificar se o cliente atingiu o numero de registros necessários
 		if($cam_qtde > $qtde->fields("qtde")){
