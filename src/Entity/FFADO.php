@@ -2,11 +2,6 @@
 
 namespace FidelizeFood\Entity;
 
-$conn = \ADOdbConnection::getConn();
-
-//para funcionar o ORM tem que setar o objeto $db aqui neste método
-\ADOdb_Active_Record::SetDatabaseAdapter($conn);
-
 abstract class FFADO extends \ADOdb_Active_Record{
 	
 	protected $conn = null;
@@ -14,14 +9,19 @@ abstract class FFADO extends \ADOdb_Active_Record{
 	protected $nameId = "";
 	
 	public function __construct(){
-	
+		
+		$this->conn = \ADOdbConnection::getConn();
+
+		//para funcionar o ORM tem que setar o objeto $db aqui neste método
+		\ADOdb_Active_Record::SetDatabaseAdapter($this->conn);
+		
 		parent::__construct();
 		
 	}
 	
 	public function getConn(){		
 		
-		return \ADOdbConnection::getConn();
+		return $this->conn;
 	}
 	
 	public function save(){
@@ -56,8 +56,7 @@ abstract class FFADO extends \ADOdb_Active_Record{
 	}
 	
 	public function nextId(){
-		global $db;
-		
+		$db = $this->getConn();
 		return $this->lastInsertID($db, $this->getNameId()) + 1;
 	}
 	

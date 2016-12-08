@@ -13,19 +13,29 @@ catch(Exception $e){
 
 class ADOdbConnection {
 	
+	protected static $instance;
+	
+	protected function __construct(){
+		
+	}
+	
 	public static function getConn(){
 		
-		$db = ADOnewConnection("pdo");
-		
-		$user     = 'bcc21a07f6001f';
-		$password = '83ec7971';
-		$database = 'fidelizefood';
-		$dsnString= "host=br-cdbr-azure-south-b.cloudapp.net;dbname=$database;charset=utf8mb4";
+		if(self::$instance == null){
+			self::$instance = ADOnewConnection("pdo");
+			
+			$user     = 'bcc21a07f6001f';
+			$password = '83ec7971';
+			$database = 'fidelizefood';
+			$dsnString= "host=br-cdbr-azure-south-b.cloudapp.net;dbname=$database;charset=utf8mb4";
 
-		 $db->connect('mysql:' . $dsnString,$user,$password);
-		 
-		 return $db;
+			self::$instance->connect('mysql:' . $dsnString,$user,$password);
+			
+		}
+		
+		return self::$instance;
 	}
+	
 }
 
 
