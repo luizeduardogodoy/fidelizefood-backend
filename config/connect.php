@@ -31,5 +31,5 @@ class ADOdbConnection {
 
 //$db->debug = true;
 
-//para funcionar o ORM tem que setar o objeto $db aqui neste método
+
 
