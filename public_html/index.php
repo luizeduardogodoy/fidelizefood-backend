@@ -127,19 +127,23 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 	// Recuperando informacoes do restaurante
 	$rest = new Restaurante();
 	if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
-		print $dados = ["status" => "!restaurante"];		
+		$dados = ["status" => "!restaurante"];
+		print json_encode($dados);		
 		exit;
 	}
 	
 	// Recuperando informacoes da campanha
 	$restCampanha = new RestauranteCampanha();
 	if(!$restCampanha->Load("restaurante_idrestaurante = " . $rest->idrestaurante)){
-		print $dados = ["status" => "!restauranteCampanha"];		
+		$dados = ["status" => "!restauranteCampanha"];		
+		print json_encode($dados);
 		exit;
 	}
 	
 	// iterando no resultado e adicionando as informacoes para retorno via json
 	if(!$restCampanha->EOF){
+		$dados["idcampanha"] = $restCampanha->idcampanha;
+		$dados["idrestaurante"] = $rest->idrestaurante;
 		$dados["nomecampanha"] = $restCampanha->nomecampanha;
 		$dados["qtde"] = $restCampanha->qtde;  
 		$dados["observacao"] = $restCampanha->observacao;
@@ -223,36 +227,72 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 		
 	print json_encode($dados);
 	exit;
-	
-	
-	/*$dados = ["status" => "!ok"];	
-	
-	$sql =  "SELECT a.nome, a.cidade, a.estado FROM restaurante a ";
-	$sql .= "INNER JOIN usuario b ON a.usuario_idusuario = b.idusuario ";
-	$sql .= "WHERE usuario_idusuario = " . $_POST["user_id"] . " AND b.tipo = 2 ";
-	
-	$res = \ADOdbConnection::getConn()->Execute($sql);
-	
-	if(!$res->EOF){
-		$dados["nome"] = $res->fields("nome");
-		$dados["cidade"] = $res->fields("cidade");  
-		$dados["estado"] = $res->fields("estado");				
-			
-		$dados["status"] = "ok";
-	}
+}
 
-	else{
+/* Verifica se ha campanha já cadastrada e quais suas informações, busca pelo id da campanha */
+if($idx->getPostResponse("req") == "consultacampanhabyid"){
 		
-		$dados["status"] = "!ok";
+	// Recuperando informacoes da campanha
+	$restCampanha = new RestauranteCampanha();
+	if(!$restCampanha->Load("idcampanha = " . $idx->getPostResponse("idcampanha"))){
+		$dados = ["status" => "!restauranteCampanha"];		
+		print json_encode($dados);
+		exit;
+	}
+	
+	// iterando no resultado e adicionando as informacoes para retorno via json
+	if(!$restCampanha->EOF){
+
+		$dados["idcampanha"] = $restCampanha->idcampanha;
+		$dados["nomecampanha"] = $restCampanha->nomecampanha;
+		$dados["qtde"] = $restCampanha->qtde;  
+		$dados["observacao"] = $restCampanha->observacao;
 		
+		list($ano, $mes, $dia) = explode("-", $restCampanha->datainicial);
+			$dtini = $ano . "-" . $mes . "-" . $dia;
+				
+		list($ano, $mes, $dia) = explode("-", $restCampanha->datafinal);
+			$dtfim = $ano . "-" . $mes . "-" . $dia;
+			
+		$dados["datainicial"] = $dtini;		
+		$dados["datafinal"] = $dtfim;
+
+		$dados["status"] = "ok";				
+
+	}		
+			
+	print json_encode($dados);
+	exit;
+}
+
+
+/* atualização de campanhas */
+if($idx->getPostResponse("req") == "atualizarcampanha"){
+	
+	
+	// Recuperando usuarios ativos na campanha
+	$sql = "UPDATE fidelizefood.campanha SET 
+			nomecampanha=" . $idx->getPostResponse("nomeCampanha")  . ", 
+			datafinal=" . $idx->getPostResponse("dtFim")  . ", 
+			observacao= " . $idx->getPostResponse("obs")  . "
+			WHERE idCampanha = " . $idx->getPostResponse("idcampanha")  . " 
+			and restaurante_idrestaurante=" . $idx->getPostResponse("idrestaurante");
+
+	$updateCamp = \ADOdbConnection::getConn()->Execute($sql);
+	
+	if($updateCamp->EOF){
+		print json_encode(["status" => "ok"]);	
+		exit;		
+	} else {
+		$dados["status"] = "!ok";				
 	}
 		
 	print json_encode($dados);
-	exit;*/
+	exit;
 }
 
-/*Verifica se o user logado ja tem restaurante informado, isso so vale para user do tipo == 2*/
 
+/*Verifica se o user logado ja tem restaurante informado, isso so vale para user do tipo == 2*/
 if($idx->getPostResponse("req") == "consultarestaurante"){
 	
 	$dados = ["status" => "!ok"];	
