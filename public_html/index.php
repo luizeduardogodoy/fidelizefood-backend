@@ -269,24 +269,35 @@ if($idx->getPostResponse("req") == "consultacampanhabyid"){
 /* atualização de campanhas */
 if($idx->getPostResponse("req") == "atualizarcampanha"){
 	
-	
-	// Recuperando usuarios ativos na campanha
-	$sql = "UPDATE fidelizefood.campanha SET 
-			nomecampanha=" . $idx->getPostResponse("nomeCampanha")  . ", 
-			datafinal=" . $idx->getPostResponse("dtFim")  . ", 
-			observacao= " . $idx->getPostResponse("obs")  . "
-			WHERE idCampanha = " . $idx->getPostResponse("idcampanha")  . " 
-			and restaurante_idrestaurante=" . $idx->getPostResponse("idrestaurante");
-
-	$updateCamp = \ADOdbConnection::getConn()->Execute($sql);
-	
-	if($updateCamp->EOF){
-		print json_encode(["status" => "ok"]);	
-		exit;		
-	} else {
-		$dados["status"] = "!ok";				
+	// Recuperando informacoes da campanha
+	$restCampanha = new RestauranteCampanha();
+	if(!$restCampanha->Load("idCampanha = " . $idx->getPostResponse("idcampanha"))){
+		$dados = ["status" => "!restauranteCampanha"];		
+		print json_encode($dados);
+		exit;
 	}
+	
+	try{
 		
+		// iterando no resultado e adicionando as informacoes para retorno via json
+		if(!$restCampanha->EOF){
+			
+			$restCampanha->idcampanha = $idx->getPostResponse("idcampanha");
+			$restCampanha->idrestaurante = $idx->getPostResponse("idcampanha");
+			$restCampanha->nomecampanha = $idx->getPostResponse("nomeCampanha");
+			$restCampanha->datafinal = $idx->getPostResponse("dtFim");
+			$restCampanha->observacao = $idx->getPostResponse("obs");
+			
+			$restCampanha->Save();
+			
+			$dados = ["status" => "ok"];				
+		}
+		
+	}
+	catch(Exception $e){
+		$dados["status"] = "!ok";
+	}
+	
 	print json_encode($dados);
 	exit;
 }
