@@ -403,4 +403,17 @@ if($idx->getPostResponse("req") == "listarcampanhaspart"){
 	
 }
 
+/*Lista Carimbos das campanhas que o usuário consumidor particia*/
+
+if($idx->getPostResponse("req") == "listarCarimbosPart"){
+	
+	$consumidorController = new FidelizeFood\Controller\ConsumidorController();
+	
+	$dados = $consumidorController->listarCarimbosParticipando();
+	
+	print json_encode($dados);
+	exit;
+	
+}
+
 //var_dump($_SESSION);
