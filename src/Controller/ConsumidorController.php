@@ -60,7 +60,7 @@ class ConsumidorController extends Controller{
 				WHERE 1=1
 					AND utilizado IS NULL
 					
-					AND a.idusuariocampanha = 
+					AND a.idusuariocampanha = ".$this->getPostResponse("idUsuarioCampanha")."
 				ORDER BY d.data";
 				//João
 	
