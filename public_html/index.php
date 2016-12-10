@@ -361,7 +361,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 	//verifica se existe o cliente informado, aqui também verifica se o usuário é do tipo 1 = Consumidor
 	$cliente = new Usuario();
 	
-	if(!$cliente->Load('idusuario = ' . $idx->getPostResponse("idusercliente") . " AND tipo = 1 ")){
+	if(!$cliente->Load("cpf = '" . $idx->getPostResponse("idusercliente") . "' AND tipo = 1 ")){
 		
 		$dados["mensagem"] = "Cliente não encontrado";
 	
@@ -369,6 +369,8 @@ if($idx->getPostResponse("req") == "carimbo"){
 		
 		exit;		
 	}
+	
+	echo $cliente->nome;
 	
 	/*pega o restaurante*/
 	
@@ -398,7 +400,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 		$usucam = new UsuarioCampanha();
 		
 		//se nao existe um registro nesta tabela, insere, se não adiciona o item no registro ja existente
-		if(!$usucam->Load("idrestaurantefk = " . $rest->idrestaurante . " AND utilizado IS NULL AND idusuariofk = " . $idx->getPostResponse("idusercliente"))){
+		if(!$usucam->Load("idrestaurantefk = " . $rest->idrestaurante . " AND utilizado IS NULL AND idusuariofk = " . $cliente->idusuario)){
 			
 			$usucam->idusuariocampanha = $usucam->nextId();
 			$usucam->idrestaurantefk = $rest->idrestaurante;
@@ -420,7 +422,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 			$usucamitem->data = Date("Y-m-d");
 			$usucamitem->Save();
 			
-			$dados["mensagem"] = "Refeição adicionada";
+			$dados["mensagem"] = "Refeição adicionadaa";
 			
 			if($cam_qtde == $qtde->fields("qtde") + 1)
 				$dados["mensagem"] .= " - Atingiu";
