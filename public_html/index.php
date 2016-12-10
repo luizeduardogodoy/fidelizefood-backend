@@ -410,7 +410,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 				
 		}
 		
-		echo $sql = "SELECT count(*) AS qtde FROM usuariocampanhaitem WHERE idusuariocampanhafk = " . $usucam->idusuariocampanha;
+		$sql = "SELECT count(*) AS qtde FROM usuariocampanhaitem WHERE idusuariocampanhafk = " . $usucam->idusuariocampanha;
 		$qtde = \ADOdbConnection::getConn()->Execute($sql);
 		
 		//aqui faz a validação para verificar se o cliente atingiu o numero de registros necessários
