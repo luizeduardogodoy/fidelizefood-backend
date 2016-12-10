@@ -420,14 +420,14 @@ if($idx->getPostResponse("req") == "carimbo"){
 			$usucamitem->data = Date("Y-m-d");
 			$usucamitem->Save();
 			
-			$dados["mensagem"] = "Refeição adicionadaa";
+			$dados["mensagem"] = "Refeição adicionada...";
 			
 			if($cam_qtde == $qtde->fields("qtde") + 1)
 				$dados["mensagem"] .= " - Atingiu";
 				
 		}
 		else{
-			$dados["mensagem"] = "Cliente atingiu o total de refeições estipulado na campanha";
+			$dados["mensagem"] = "Cliente atingiu o total</br>de refeições estipulado na campanha...";
 		}
 		
 		$dados["status"] = "ok";

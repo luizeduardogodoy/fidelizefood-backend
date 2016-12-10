@@ -14,3 +14,4 @@ if(isset($_SESSION['LAST']) && (time() - $_SESSION['LAST'] > $expiry)) {
 }
 
 $_SESSION['LAST'] = time();
+date_default_timezone_set('America/Sao_Paulo');
