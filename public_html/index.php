@@ -402,13 +402,15 @@ if($idx->getPostResponse("req") == "carimbo"){
 			
 			$usucam->idusuariocampanha = $usucam->nextId();
 			$usucam->idrestaurantefk = $rest->idrestaurante;
-			$usucam->idusuariofk = $idx->getPostResponse("idusercliente");
+			$usucam->idusuariofk = $cliente->idusuario;
 			$usucam->idcampanhafk = $cam->fields("idCampanha");
 			//$usucam->utilizado = "";
+			
 			$usucam->Save();
+				
 		}
 		
-		$sql = "SELECT count(*) AS qtde FROM usuariocampanhaitem WHERE idusuariocampanhafk = " . $usucam->idusuariocampanha;
+		echo $sql = "SELECT count(*) AS qtde FROM usuariocampanhaitem WHERE idusuariocampanhafk = " . $usucam->idusuariocampanha;
 		$qtde = \ADOdbConnection::getConn()->Execute($sql);
 		
 		//aqui faz a validação para verificar se o cliente atingiu o numero de registros necessários
