@@ -370,8 +370,6 @@ if($idx->getPostResponse("req") == "carimbo"){
 		exit;		
 	}
 	
-	echo $cliente->nome;
-	
 	/*pega o restaurante*/
 	
 	$rest = new Restaurante();
@@ -443,7 +441,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 	exit;
 }
 
-/*Lista campanhas que o usuário consumidor particia*/
+/*Lista campanhas que o usuário consumidor participa*/
 
 if($idx->getPostResponse("req") == "listarcampanhaspart"){
 	
@@ -467,6 +465,90 @@ if($idx->getPostResponse("req") == "listarCarimbosPart"){
 	print json_encode($dados);
 	exit;
 	
+}
+
+/*Funcionalidade para registrar o premio concedido*/
+
+if($idx->getPostResponse("req") == "premio"){
+	
+	$dados = ["status" => "!ok"];	
+	
+	try{
+	
+		//verifica se existe o cliente informado, aqui também verifica se o usuário é do tipo 1 = Consumidor
+		$cliente = new Usuario();
+		
+		if(!$cliente->Load("cpf = '" . $idx->getPostResponse("idusercliente") . "' AND tipo = 1 ")){
+			
+			$dados["mensagem"] = "Cliente não encontrado";
+		
+			print json_encode($dados);
+			
+			exit;		
+		}
+		
+		
+		/*pega o restaurante*/
+		
+		$rest = new Restaurante();
+		if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
+			print $dados = ["status" => "!restaurante"];		
+			exit;
+		}
+		
+		/*pega a campanha ativa*/
+		$sql  = "SELECT * FROM campanha ";
+		$sql .= "WHERE datainicial <= '" . Date("Y-m-d") . "' ";
+		$sql .= "AND datafinal >= '" . Date("Y-m-d") . "' ";
+		$sql .= "AND restaurante_idrestaurante = " . $rest->idrestaurante;
+		
+		$cam = \ADOdbConnection::getConn()->Execute($sql);
+		//var_dump($cam);
+		if($cam->EOF){
+			print json_encode(["status" => "!temcampanha"]);
+			
+			exit;		
+		}
+		
+		$cam_qtde = $cam->fields("qtde");
+		
+		$usucam = new UsuarioCampanha();
+		$usucam->Load("idusuariofk = " . $cliente->idusuario . " AND idcampanhafk = " . $cam->fields("idCampanha") . " AND utilizado IS NULL");
+		
+		if($usucam->idusuariocampanha != ""){
+			$sql = "SELECT count(*) AS qtde, max(data) AS ult_ref FROM usuariocampanhaitem WHERE idusuariocampanhafk = " . $usucam->idusuariocampanha;
+			$qtde = \ADOdbConnection::getConn()->Execute($sql);
+			
+			$dados["cam_qtde"] = $cam_qtde;
+			$dados["qtde_ref"] = $qtde->fields("qtde");
+			$dados["ult_ref"]  = $qtde->fields("ult_ref");
+			
+			if($cam_qtde == $qtde->fields("qtde")){
+				$usucam->utilizado = Date("Y-m-d");
+				$usucam->Save();
+				
+				$dados["mensagem"] = "Operação efetuada com sucesso!";
+			}
+			else{
+				$dados["mensagem"] = "Cliente ainda não atingiu o qtde necessária: " .  $qtde->fields("qtde") . " - " . $cam_qtde;
+				
+			}
+		}
+		else{
+			$dados["mensagem"] = "Não foi encontrado uma participação ativa";
+		}
+		
+		$dados["status"] = "ok";
+		
+	}
+	catch(Exception $e){
+		
+		
+		$dados["status"] = "!ok";
+	}
+	
+	print json_encode($dados);
+	exit;
 }
 
 //var_dump($_SESSION);
