@@ -26,7 +26,7 @@ class ConsumidorController extends Controller{
 	
 		if($res){
 			
-			$dados["registros"] = 0;
+			$dados["registros"] = array();
 			
 			while(!$res->EOF){
 				
