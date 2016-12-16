@@ -25,6 +25,9 @@ class ConsumidorController extends Controller{
 		$res = \ADOdbConnection::getConn()->Execute($sql);
 	
 		if($res){
+			
+			$dados["registros"] = 0;
+			
 			while(!$res->EOF){
 				
 				list($ano, $mes, $dia) = explode("-", $res->fields("ultima"));
