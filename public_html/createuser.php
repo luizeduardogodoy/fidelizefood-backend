@@ -10,7 +10,7 @@ var_dump($_POST);
 
 if(isset($_POST["createUser"]) && $_POST["createUser"] ==  "001"){
   
-  echo "banana";
+  echo "banana1";
   
   echo "criação do usuário liberada";
 
