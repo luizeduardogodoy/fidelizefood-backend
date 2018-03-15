@@ -13,6 +13,8 @@ use FidelizeFood\Controller\IndexController;
 
 echo "Teste";
 
+var_dump($_POST);
+
 $idx = new IndexController();
 
 $_SESSION["NameAPP"] = "fidelizefood";
