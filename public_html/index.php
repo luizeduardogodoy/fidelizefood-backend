@@ -11,10 +11,6 @@ use FidelizeFood\Entity\Restaurante;
 use FidelizeFood\Entity\RestauranteCampanha;
 use FidelizeFood\Controller\IndexController;
 
-echo "Teste";
-
-var_dump($_POST);
-
 $idx = new IndexController();
 
 $_SESSION["NameAPP"] = "fidelizefood";
