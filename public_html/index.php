@@ -19,7 +19,7 @@ $_SESSION["NameAPP"] = "fidelizefood";
 if(!isset($_SESSION['UsuarioID'])){
 			
 	if($idx->getPostResponse("req") != "login" && $idx->getPostResponse("req") != "cadastrouser"){
-		print json_encode(["status" => "!logado", "debug_UserId" => $_SESSION['UsuarioID']]);
+		print json_encode(["status" => "!logado", "debug_UserId4" => $_SESSION['UsuarioID']]);
 		
 		exit;
 	}
@@ -47,6 +47,8 @@ if($idx->getPostResponse("req") == "login"){
 			$_SESSION['LAST'] = time();
 			$_SESSION['UsuarioID'] = $usu->idusuario;
 			$_SESSION['UsuarioTipo'] = $usu->tipo;
+			
+			var_dump($_SESSION);
 			
 		}		
 	}
