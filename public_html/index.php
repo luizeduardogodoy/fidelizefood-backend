@@ -16,14 +16,14 @@ $idx = new IndexController();
 $_SESSION["NameAPP"] = "fidelizefood";
 
 //se não existe usuário setado na sessão
-if(!isset($_SESSION['UsuarioID'])){
+/*if(!isset($_SESSION['UsuarioID'])){
 			
 	if($idx->getPostResponse("req") != "login" && $idx->getPostResponse("req") != "cadastrouser"){
 		print json_encode(["status" => "!logado", "debug_UserId4" => $_SESSION['UsuarioID']]);
 		
 		exit;
 	}
-}
+}*/
 
 /*****LOGIN****/
 if($idx->getPostResponse("req") == "login"){
@@ -449,7 +449,7 @@ if($idx->getPostResponse("req") == "listarcampanhaspart"){
 	
 	$consumidorController = new FidelizeFood\Controller\ConsumidorController();
 	
-	$dados = $consumidorController->listarCampanhasParticipando();
+	$dados = $consumidorController->listarCampanhasParticipando($idx->getPostResponse("ID_USER"));
 	
 	print json_encode($dados);
 	exit;

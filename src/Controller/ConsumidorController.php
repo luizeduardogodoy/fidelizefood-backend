@@ -11,14 +11,14 @@ class ConsumidorController extends Controller{
 		
 	}
 	
-	public function listarCampanhasParticipando(){
+	public function listarCampanhasParticipando($id){
 		global $db;
 		
 		$sql = "SELECT a.idusuariocampanha, b.nome, c.datainicial, c.datafinal, c.qtde, count(*) AS refeicoes, max(d.data) AS ultima FROM usuariocampanha a
 				INNER JOIN restaurante b ON b.idrestaurante = a.idrestaurantefk
 				INNER JOIN campanha c ON c.idcampanha = a.idcampanhafk
 				INNER JOIN usuariocampanhaitem d ON a.idusuariocampanha = d.idusuariocampanhafk
-				WHERE idusuariofk = " . $_SESSION["UsuarioID"] . " AND utilizado IS NULL				
+				WHERE idusuariofk = " . $id . " AND utilizado IS NULL				
 				GROUP BY  a.idusuariocampanha 
 				ORDER BY a.idusuariocampanha";
 	
