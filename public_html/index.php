@@ -4,6 +4,8 @@ require "../config/session.php";
 require "../config/autoload.php";
 require "../config/connect.php";
 
+echo phpinfo();
+
 use FidelizeFood\Entity\Usuario;
 use FidelizeFood\Entity\UsuarioCampanha;
 use FidelizeFood\Entity\UsuarioCampanhaItem;
@@ -47,8 +49,6 @@ if($idx->getPostResponse("req") == "login"){
 			$_SESSION['LAST'] = time();
 			$_SESSION['UsuarioID'] = $usu->idusuario;
 			$_SESSION['UsuarioTipo'] = $usu->tipo;
-			
-			var_dump($_SESSION);
 			
 		}		
 	}
