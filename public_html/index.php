@@ -4,8 +4,6 @@ require "../config/session.php";
 require "../config/autoload.php";
 require "../config/connect.php";
 
-echo phpinfo();
-
 use FidelizeFood\Entity\Usuario;
 use FidelizeFood\Entity\UsuarioCampanha;
 use FidelizeFood\Entity\UsuarioCampanhaItem;

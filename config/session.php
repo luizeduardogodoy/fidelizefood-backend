@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+//session_start();
 
 $expiry = 6000;//session expiry required after 1 min
 
