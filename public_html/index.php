@@ -553,4 +553,17 @@ if($idx->getPostResponse("req") == "premio"){
 	exit;
 }
 
+if($idx->getPostResponse("req") == "verificaemail"){
+	$usu = new Usuario();
+	
+	if($usu->Load("email = '" . $idx->getPostResponse("email")  . "'")){
+		print '{"jaExiste":"sim"}';
+
+	}
+	else{
+		print '{"jaExiste":"nao"}';		
+	}
+
+}
+
 //var_dump($_SESSION);
