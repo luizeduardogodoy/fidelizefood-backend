@@ -11,6 +11,8 @@ use FidelizeFood\Entity\Restaurante;
 use FidelizeFood\Entity\RestauranteCampanha;
 use FidelizeFood\Controller\IndexController;
 
+$CKey = Date("Y");
+
 $idx = new IndexController();
 
 $_SESSION["NameAPP"] = "fidelizefood";
@@ -126,7 +128,7 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 	
 	// Recuperando informacoes do restaurante
 	$rest = new Restaurante();
-	if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
+	if(!$rest->Load("usuario_idusuario = " . $idx->getPostResponse("UsuarioID"))){
 		$dados = ["status" => "!restaurante"];
 		print json_encode($dados);		
 		exit;
@@ -310,21 +312,27 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 	
 	// Pega o restaurante
 	$rest = new Restaurante();
-	if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
+	if(!$rest->Load("usuario_idusuario = " . $idx->getPostResponse("UsuarioID"))){
 	
 		$dados = ["status" => "!restaurante"];		
 	
 	} else { 
-	
+		
+		$dados["nome"] = $rest->nome;
+		$dados["estado"] = $rest->estado;
+		$dados["cidade"] = $rest->cidade;
+		$dados["endereco"] = $rest->endereco;
+		$dados["telefone"] = $rest->telefone;
+		
 		// Recuperando informacoes da campanha
 		$restCampanha = new RestauranteCampanha();
 		if(!$restCampanha->Load("restaurante_idrestaurante = " . $rest->idrestaurante)){
 			
-			$dados = ["status" => "!campanha"];		
+			$dados["status"] = "!campanha";		
 			
 		}else{
 			
-			$dados = ["status" => "ok"];		
+			$dados["status"] = "ok";		
 		
 		}
 	
@@ -551,6 +559,21 @@ if($idx->getPostResponse("req") == "premio"){
 	
 	print json_encode($dados);
 	exit;
+}
+
+
+if($idx->getPostResponse("req") == "verificaemail"){
+	
+	$usu = new Usuario();
+	
+	if($usu->Load("email = '" . $idx->getPostResponse("email")  . "'")){
+		print '{"jaExiste": "sim"}';
+	}
+	else
+		print '{"jaExiste": "nao"}';
+	
+	exit;
+	
 }
 
 //var_dump($_SESSION);
