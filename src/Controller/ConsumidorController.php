@@ -74,9 +74,9 @@ class ConsumidorController extends Controller{
 				
 				list($ano, $mes, $dia) = explode("-", $res->fields("DataCarimbo"));
 				$ultima = $dia . "/" . $mes . "/" . $ano;
-				list($ano, $mes, $dia) = explode("-", $res->fields("DataInicial"));
+				list($ano, $mes, $dia) = explode("-", $res->fields("datainicial"));
 				$inicial = $dia . "/" . $mes . "/" . $ano;
-				list($ano, $mes, $dia) = explode("-", $res->fields("DataFinal"));
+				list($ano, $mes, $dia) = explode("-", $res->fields("datafinal"));
 				$final = $dia . "/" . $mes . "/" . $ano;
 				
 				$dados["registros"][] = array("nomeRestaurante" => $res->fields("nome"),

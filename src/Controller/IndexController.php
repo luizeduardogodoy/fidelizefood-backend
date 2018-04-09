@@ -39,17 +39,23 @@ class IndexController extends Controller{
 	 * 
 	 */
 	public function createRestaurant(){
-
+		
 		$restaurante = new Restaurante();
-
-		$restaurante->idrestaurante = $restaurante->nextId();
+		
+		//como restaurante é unico por usuário, se ja existir um para o user em questão, atualiza apenas
+		if(!$restaurante->Load('usuario_idusuario = ' . $this->getPostResponse("idusuario"))){
+		
+			$restaurante->idrestaurante = $restaurante->nextId();
+			$restaurante->usuario_idusuario = $this->getPostResponse("idusuario");
+		}
+		
 		$restaurante->nome = $this->getPostResponse("name");
 		$restaurante->cnpj = $this->getPostResponse("cnpj");
 		$restaurante->estado = $this->getPostResponse("state");
 		$restaurante->cidade = $this->getPostResponse("city");
 		$restaurante->endereco = $this->getPostResponse("address");
 		$restaurante->telefone = $this->getPostResponse("phone");
-		$restaurante->usuario_idusuario = $this->getPostResponse("idusuario");
+		
 
 		if($restaurante->Save()){
 
