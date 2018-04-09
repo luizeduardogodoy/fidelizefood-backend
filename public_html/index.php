@@ -11,6 +11,7 @@ use FidelizeFood\Entity\Restaurante;
 use FidelizeFood\Entity\RestauranteCampanha;
 use FidelizeFood\Controller\IndexController;
 
+
 $CKey = Date("Y");
 
 $idx = new IndexController();
@@ -563,17 +564,17 @@ if($idx->getPostResponse("req") == "premio"){
 
 
 if($idx->getPostResponse("req") == "verificaemail"){
-	
 	$usu = new Usuario();
 	
 	if($usu->Load("email = '" . $idx->getPostResponse("email")  . "'")){
-		print '{"jaExiste": "sim"}';
+		print '{"jaExiste":"sim"}';
+
 	}
-	else
-		print '{"jaExiste": "nao"}';
+	else{
+		print '{"jaExiste":"nao"}';		
+	}
 	
 	exit;
-	
 }
 
 //var_dump($_SESSION);
