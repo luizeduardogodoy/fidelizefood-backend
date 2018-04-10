@@ -42,7 +42,7 @@ class IndexController extends Controller{
 		
 		$restaurante = new Restaurante();
 		
-		//como restaurante é unico por usuário, se ja existir um para o user em questão, atualiza apenas
+		//como restaurante é unico por usuário(Restaurante), se ja existir um para o user em questão, atualiza apenas
 		if(!$restaurante->Load('usuario_idusuario = ' . $this->getPostResponse("idusuario"))){
 		
 			$restaurante->idrestaurante = $restaurante->nextId();
@@ -54,8 +54,7 @@ class IndexController extends Controller{
 		$restaurante->estado = $this->getPostResponse("state");
 		$restaurante->cidade = $this->getPostResponse("city");
 		$restaurante->endereco = $this->getPostResponse("address");
-		$restaurante->telefone = $this->getPostResponse("phone");
-		
+		$restaurante->telefone = $this->getPostResponse("phone");		
 
 		if($restaurante->Save()){
 

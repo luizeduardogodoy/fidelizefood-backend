@@ -18,8 +18,8 @@ class ConsumidorController extends Controller{
 				INNER JOIN restaurante b ON b.idrestaurante = a.idrestaurantefk
 				INNER JOIN campanha c ON c.idcampanha = a.idcampanhafk
 				INNER JOIN usuariocampanhaitem d ON a.idusuariocampanha = d.idusuariocampanhafk
-				WHERE idusuariofk = " . $id . " AND utilizado IS NULL				
-				GROUP BY  a.idusuariocampanha 
+				WHERE idusuariofk = " . $id . " AND utilizado = false			
+				GROUP BY  a.idusuariocampanha , nome, datainicial, datafinal, qtde
 				ORDER BY a.idusuariocampanha";
 	
 		$res = \ADOdbConnection::getConn()->Execute($sql);
@@ -33,10 +33,19 @@ class ConsumidorController extends Controller{
 				list($ano, $mes, $dia) = explode("-", $res->fields("ultima"));
 				$ultima = $dia . "/" . $mes . "/" . $ano;
 				
+				list($ano, $mes, $dia) = explode("-", $res->fields("datainicial"));
+				$inicial = $dia . "/" . $mes . "/" . $ano;
+				
+				list($ano, $mes, $dia) = explode("-", $res->fields("datafinal"));
+				$final = $dia . "/" . $mes . "/" . $ano;
+				
+				
 				$dados["registros"][] = array("nomeRestaurante" => $res->fields("nome"),
 														"qtde" => $res->fields("qtde"),  
 														"refeicoes" => $res->fields("refeicoes"), 
 														"ultima" => $ultima,
+														"datainicial" => $inicial,
+														"datafinal" => $final,
 														"idusuariocampanha" => $res->fields("idusuariocampanha"));				
 				
 				$res->MoveNext();
@@ -55,15 +64,13 @@ class ConsumidorController extends Controller{
 	
 	public function listarCarimbosParticipando(){
 			
-		$sql = "SELECT a.idusuariocampanha, b.nome, c.datainicial, c.datafinal, c.qtde, d.data AS DataCarimbo
+		$sql = "SELECT a.idusuariocampanha, b.nome, c.datainicial, c.datafinal, c.qtde, d.data AS datacarimbo
 				FROM usuariocampanha a
 				INNER JOIN restaurante b ON b.idrestaurante = a.idrestaurantefk
 				INNER JOIN campanha c ON c.idcampanha = a.idcampanhafk
 				INNER JOIN usuariocampanhaitem d ON a.idusuariocampanha = d.idusuariocampanhafk
-				WHERE 1=1
-					AND utilizado IS NULL
-					
-					AND a.idusuariocampanha = ".$this->getPostResponse("idUsuarioCampanha")."
+				WHERE utilizado = false
+				AND a.idusuariocampanha = ".$this->getPostResponse("idUsuarioCampanha")."
 				ORDER BY d.data";
 				//João
 	
@@ -72,7 +79,7 @@ class ConsumidorController extends Controller{
 		if($res){
 			while(!$res->EOF){
 				
-				list($ano, $mes, $dia) = explode("-", $res->fields("DataCarimbo"));
+				list($ano, $mes, $dia) = explode("-", $res->fields("datacarimbo"));
 				$ultima = $dia . "/" . $mes . "/" . $ano;
 				list($ano, $mes, $dia) = explode("-", $res->fields("datainicial"));
 				$inicial = $dia . "/" . $mes . "/" . $ano;

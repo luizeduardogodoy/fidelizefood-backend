@@ -377,13 +377,15 @@ if($idx->getPostResponse("req") == "carimbo"){
 		print json_encode($dados);
 		
 		exit;		
+	}else{
+		$dados["nome"] = $cliente->nome;
 	}
 	
 	/*pega o restaurante*/
 	
 	$rest = new Restaurante();
-	if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
-		print $dados = ["status" => "!restaurante"];		
+	if(!$rest->Load("usuario_idusuario = " . $idx->getPostResponse("UsuarioID"))){
+		print $dados["status"] = "!restaurante";		
 		exit;
 	}
 	
@@ -407,13 +409,13 @@ if($idx->getPostResponse("req") == "carimbo"){
 		$usucam = new UsuarioCampanha();
 		
 		//se nao existe um registro nesta tabela, insere, se não adiciona o item no registro ja existente
-		if(!$usucam->Load("idrestaurantefk = " . $rest->idrestaurante . " AND utilizado IS NULL AND idusuariofk = " . $cliente->idusuario)){
+		if(!$usucam->Load("idrestaurantefk = " . $rest->idrestaurante . " AND utilizado = false AND idusuariofk = " . $cliente->idusuario)){
 			
 			$usucam->idusuariocampanha = $usucam->nextId();
 			$usucam->idrestaurantefk = $rest->idrestaurante;
 			$usucam->idusuariofk = $cliente->idusuario;
-			$usucam->idcampanhafk = $cam->fields("idCampanha");
-			//$usucam->utilizado = "";
+			$usucam->idcampanhafk = $cam->fields("idcampanha");
+			$usucam->utilizado = "f";
 			
 			$usucam->Save();
 				
@@ -429,19 +431,25 @@ if($idx->getPostResponse("req") == "carimbo"){
 			$usucamitem->idusuariocampanhaitem = $usucamitem->nextId();
 			$usucamitem->idusuariocampanhafk = $usucam->idusuariocampanha;
 			$usucamitem->data = Date("Y-m-d");
-			$usucamitem->Save();
 			
-			$dados["mensagem"] = "Refeição adicionada...";
+			if($usucamitem->Save()){
 			
-			if($cam_qtde == $qtde->fields("qtde") + 1)
-				$dados["mensagem"] .= " - Atingiu";
+				$dados["mensagem"] = "Refeição adicionada...";
+				
+				if($cam_qtde == $qtde->fields("qtde") + 1)
+					$dados["mensagem"] .= " - Atingiu";
+				
+				$dados["status"] = "ok";
+			}else{
+				$dados["status"] = "!ok";
+			}
 				
 		}
 		else{
-			$dados["mensagem"] = "Cliente atingiu o total</br>de refeições estipulado na campanha...";
+			$dados["mensagem"] = "Cliente atingiu o total de refeições estipulado na campanha";
+			$dados["status"] = "ok";
 		}
 		
-		$dados["status"] = "ok";
 		
 	}
 	catch(Exception $e){
