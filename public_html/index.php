@@ -8,7 +8,7 @@ use FidelizeFood\Entity\Usuario;
 use FidelizeFood\Entity\UsuarioCampanha;
 use FidelizeFood\Entity\UsuarioCampanhaItem;
 use FidelizeFood\Entity\Restaurante;
-use FidelizeFood\Entity\RestauranteCampanha;
+use FidelizeFood\Entity\Campanha;
 use FidelizeFood\Controller\IndexController;
 
 $CKey = Date("Y");
@@ -94,24 +94,24 @@ if($idx->getPostResponse("req") == "cadastrocampanha"){
 	/*pega o restaurante*/
 	
 	$rest = new Restaurante();
-	if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
+	if(!$rest->Load("usuario_idusuario = " . $idx->getPostResponse("UsuarioID"))){
 		print $dados = ["status" => "!restaurante"];		
 		exit;
 	}
 	
 	try{
-		$restcam = new RestauranteCampanha();
+		$restcam = new Campanha();
 			
 		$restcam->idcampanha = $restcam->nextId();
 		$restcam->nomecampanha = $idx->getPostResponse("nomeCampanha");
 		$restcam->datainicial = $idx->getPostResponse("dtInicio");
 		$restcam->datafinal = $idx->getPostResponse("dtFim");
-		$restcam->qtde = $idx->getPostResponse("qtd");
+		$restcam->qtde = $idx->getPostResponse("qtde");
 		$restcam->observacao = $idx->getPostResponse("obs");
 		$restcam->restaurante_idrestaurante = $rest->idrestaurante;
 		
 		$restcam->Save();
-		
+		var_dump($restcam);
 		$dados = ["status" => "ok"];	
 	}
 	catch(Exception $e){
@@ -135,7 +135,7 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 	}
 	
 	// Recuperando informacoes da campanha
-	$restCampanha = new RestauranteCampanha();
+	$restCampanha = new Campanha();
 	if(!$restCampanha->Load("restaurante_idrestaurante = " . $rest->idrestaurante)){
 		$dados = ["status" => "!restauranteCampanha"];		
 		print json_encode($dados);
@@ -151,31 +151,22 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 		$dados["observacao"] = $restCampanha->observacao;
 		
 		list($ano, $mes, $dia) = explode("-", $restCampanha->datainicial);
-			$dtini = $dia . "/" . $mes . "/" . $ano;
+		$dtini = $dia . "/" . $mes . "/" . $ano;
 				
 		list($ano, $mes, $dia) = explode("-", $restCampanha->datafinal);
-			$dtfim = $dia . "/" . $mes . "/" . $ano;
+		$dtfim = $dia . "/" . $mes . "/" . $ano;
 			
 		$dados["datainicial"] = $dtini;		
-		$dados["datafinal"] = $dtfim;				
-		
+		$dados["datafinal"] = $dtfim;		
 		
 		// Recuperando usuarios ativos na campanha
-		$sql = "SELECT a.idCampanhaFK, 
-				   b.nome,
-				   c.nomeCampanha, 
-				   c.datainicial, 
-				   c.datafinal, 
-				   c.qtde, 
-				   count(*) AS refeicoes, 
-				   max(d.data) AS ultima 
-				FROM fidelizefood.usuariocampanha a
-				INNER JOIN fidelizefood.usuario b ON b.idUsuario = a.idUsuarioFK
-				INNER JOIN fidelizefood.campanha c ON c.idcampanha = a.idcampanhafk
-				INNER JOIN fidelizefood.usuariocampanhaitem d ON a.idusuariocampanha = d.idusuariocampanhafk
-				WHERE a.idCampanhaFK = " . $restCampanha->idcampanha . " AND utilizado IS NULL				
-				GROUP BY  a.idusuariocampanha 
-				ORDER BY a.idusuariocampanha";
+		$sql = " SELECT a.idcampanhafk, b.nome, count(*) AS refeicoes, max(d.data) AS ultima 
+					 FROM usuariocampanha a
+					 INNER JOIN usuario b ON b.idusuario = a.idusuariofk
+					 INNER JOIN usuariocampanhaitem d ON a.idusuariocampanha = d.idusuariocampanhafk
+					 WHERE a.idcampanhafk = " . $restCampanha->idcampanha . " AND utilizado IS NULL				
+					 GROUP BY a.idcampanhafk, b.nome 
+					 ORDER BY b.nome";
 	
 		$camativos = \ADOdbConnection::getConn()->Execute($sql);
 	
@@ -185,8 +176,7 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 				list($ano, $mes, $dia) = explode("-", $camativos->fields("ultima"));
 				$ultima = $dia . "/" . $mes . "/" . $ano;
 				
-				$dados["registrosativos"][] = array("nome" => $camativos->fields("nome"),
-														"qtde" => $camativos->fields("qtde"),  
+				$dados["registrosativos"][] = array("nome" => $camativos->fields("nome"),														
 														"refeicoes" => $camativos->fields("refeicoes"), 
 														"ultima" => $ultima);				
 				
@@ -196,11 +186,9 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 		
 		
 		// Recuperando usuarios premiados com o fidelize
-		$sqlpremiados = "SELECT 
-					b.nome,
-					a.utilizado
-				FROM fidelizefood.usuariocampanha a
-				INNER JOIN fidelizefood.usuario b ON b.idUsuario = a.idUsuarioFK
+		$sqlpremiados = "SELECT b.nome, a.utilizado
+				FROM usuariocampanha a
+				INNER JOIN usuario b ON b.idUsuario = a.idUsuarioFK
 				WHERE a.utilizado IS not NULL AND idCampanhaFK = " . $restCampanha->idcampanha . "  
 				ORDER BY b.nome";
 	
@@ -212,7 +200,10 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 				list($ano, $mes, $dia) = explode("-", $campremiados->fields("utilizado"));
 				$ultilizado = $dia . "/" . $mes . "/" . $ano;
 				
-				$dados["registrospremiados"][] = array("nome" => $campremiados->fields("nome"), "utilizado" => $ultilizado);				
+				$dados["registrospremiados"][] = array(
+																"nome" => $campremiados->fields("nome"), 
+																"utilizado" => $ultilizado
+															);				
 				
 				$campremiados->MoveNext();
 			}
@@ -235,7 +226,7 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 if($idx->getPostResponse("req") == "consultacampanhabyid"){
 		
 	// Recuperando informacoes da campanha
-	$restCampanha = new RestauranteCampanha();
+	$restCampanha = new Campanha();
 	if(!$restCampanha->Load("idcampanha = " . $idx->getPostResponse("idcampanha"))){
 		$dados = ["status" => "!restauranteCampanha"];		
 		print json_encode($dados);
@@ -272,7 +263,7 @@ if($idx->getPostResponse("req") == "consultacampanhabyid"){
 if($idx->getPostResponse("req") == "atualizarcampanha"){
 	
 	// Recuperando informacoes da campanha
-	$restCampanha = new RestauranteCampanha();
+	$restCampanha = new Campanha();
 	if(!$restCampanha->Load("idCampanha = " . $idx->getPostResponse("idcampanha"))){
 		$dados = ["status" => "!restauranteCampanha"];		
 		print json_encode($dados);
@@ -325,7 +316,7 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 		$dados["telefone"] = $rest->telefone;
 		
 		// Recuperando informacoes da campanha
-		$restCampanha = new RestauranteCampanha();
+		$restCampanha = new Campanha();
 		if(!$restCampanha->Load("restaurante_idrestaurante = " . $rest->idrestaurante)){
 			
 			$dados["status"] = "!campanha";		
@@ -388,7 +379,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 		exit;
 	}
 	
-	/*pega a campanha ativa*/
+	/*verifica se tem campanha ativa*/
 	$sql  = "SELECT * FROM campanha ";
 	$sql .= "WHERE datainicial <= '" . Date("Y-m-d") . "' ";
 	$sql .= "AND datafinal >= '" . Date("Y-m-d") . "' ";
@@ -405,25 +396,30 @@ if($idx->getPostResponse("req") == "carimbo"){
 	$cam_qtde = $cam->fields("qtde");
 	
 	try{
+		
+		//Verifica se ja existe a ligação entre este usuário e esta campanha
 		$usucam = new UsuarioCampanha();
 		
+		$where  = "idcampanhafk = " . $cam->fields('idcampanha');
+		$where .= "AND utilizado IS NULL "; 
+		$where .= "AND idusuariofk = " . $cliente->idusuario;
+		
 		//se nao existe um registro nesta tabela, insere, se não adiciona o item no registro ja existente
-		if(!$usucam->Load("idrestaurantefk = " . $rest->idrestaurante . " AND utilizado = false AND idusuariofk = " . $cliente->idusuario)){
+		if(!$usucam->Load($where)){
 			
 			$usucam->idusuariocampanha = $usucam->nextId();
 			$usucam->idrestaurantefk = $rest->idrestaurante;
 			$usucam->idusuariofk = $cliente->idusuario;
 			$usucam->idcampanhafk = $cam->fields("idcampanha");
-			$usucam->utilizado = "f";
+			//$usucam->utilizado = "f";
 			
-			$usucam->Save();
-				
+			$usucam->Save();	
 		}
 		
 		$sql = "SELECT count(*) AS qtde FROM usuariocampanhaitem WHERE idusuariocampanhafk = " . $usucam->idusuariocampanha;
 		$qtde = \ADOdbConnection::getConn()->Execute($sql);
 		
-		//aqui faz a validação para verificar se o cliente atingiu o numero de registros necessários
+		//aqui faz a validação para verificar se o cliente atingiu o número de registros necessários
 		if($cam_qtde > $qtde->fields("qtde")){
 		
 			$usucamitem = new UsuarioCampanhaItem();
@@ -431,25 +427,36 @@ if($idx->getPostResponse("req") == "carimbo"){
 			$usucamitem->idusuariocampanhafk = $usucam->idusuariocampanha;
 			$usucamitem->data = Date("Y-m-d");
 			
-			if($usucamitem->Save()){
+			// verifica se já não existe Carimbo para esta data
+			$sql  = "SELECT * FROM usuariocampanhaitem ";
+			$sql .= "WHERE idusuariocampanhafk = " . $usucam->idusuariocampanha;
+			$sql .= " AND data = '" . $usucamitem->data . "' ";
 			
-				$dados["mensagem"] = "Refeição adicionada...";
-				
-				if($cam_qtde == $qtde->fields("qtde") + 1)
-					$dados["mensagem"] .= " - Atingiu";
-				
+			$jaExisteEsteCarimbo = \ADOdbConnection::getConn()->Execute($sql);
+			
+			if(!$jaExisteEsteCarimbo->EOF){
+				$dados["mensagem"] = "Já foi carimbado hoje!!";
+					
 				$dados["status"] = "ok";
-			}else{
-				$dados["status"] = "!ok";
+			}
+			else{
+			
+				if($usucamitem->Save()){
+				
+					$dados["mensagem"] = "Refeição adicionada!!";
+					
+					if($cam_qtde == $qtde->fields("qtde") + 1)
+						$dados["mensagem"] .= " - Atingiu";
+					
+					$dados["status"] = "ok";
+				}
 			}
 				
 		}
 		else{
-			$dados["mensagem"] = "Cliente atingiu o total de refeições estipulado na campanha";
+			$dados["mensagem"] = "Cliente atingiu o total de refeições permitido na campanha";
 			$dados["status"] = "ok";
-		}
-		
-		
+		}	
 	}
 	catch(Exception $e){
 		$dados["status"] = "!ok";
@@ -472,7 +479,7 @@ if($idx->getPostResponse("req") == "listarcampanhaspart"){
 	
 }
 
-/*Lista Carimbos das campanhas que o usuário consumidor particia*/
+/*Lista Carimbos das campanhas que o usuário consumidor participa*/
 
 if($idx->getPostResponse("req") == "listarCarimbosPart"){
 	
@@ -503,8 +510,7 @@ if($idx->getPostResponse("req") == "premio"){
 			print json_encode($dados);
 			
 			exit;		
-		}
-		
+		}		
 		
 		/*pega o restaurante*/
 		
@@ -569,19 +575,24 @@ if($idx->getPostResponse("req") == "premio"){
 	exit;
 }
 
+/*Verifica se o email utilizado para cadastro já existe ou não*/
 
 if($idx->getPostResponse("req") == "verificaemail"){
-	$usu = new Usuario();
 	
-	if($usu->Load("email = '" . $idx->getPostResponse("email")  . "'")){
-		print '{"jaExiste":"sim"}';
+	try{
+		$usu = new Usuario();
+		
+		if($usu->Load("email = '" . $idx->getPostResponse("email")  . "'")){
+			print '{"jaExiste":"sim"}';
 
+		}
+		else{
+			print '{"jaExiste":"nao"}';
+		}
 	}
-	else{
-		print '{"jaExiste":"nao"}';		
+	catch(Exception $e){
+		print '{"status":"!ok"}';
 	}
 	
 	exit;
 }
-
-//var_dump($_SESSION);

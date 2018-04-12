@@ -2,7 +2,7 @@
 
 namespace FidelizeFood\Entity;
 
-class RestauranteCampanha extends FFADO{
+class Campanha extends FFADO{
  
  
     var $_table = "campanha";
