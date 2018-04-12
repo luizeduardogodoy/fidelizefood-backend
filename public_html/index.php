@@ -11,7 +11,6 @@ use FidelizeFood\Entity\Restaurante;
 use FidelizeFood\Entity\RestauranteCampanha;
 use FidelizeFood\Controller\IndexController;
 
-
 $CKey = Date("Y");
 
 $idx = new IndexController();
