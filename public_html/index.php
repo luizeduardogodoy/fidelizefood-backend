@@ -1,5 +1,7 @@
 <?php
 
+
+
 require "../config/session.php";
 require "../config/autoload.php";
 require "../config/connect.php";
@@ -10,6 +12,10 @@ use FidelizeFood\Entity\UsuarioCampanhaItem;
 use FidelizeFood\Entity\Restaurante;
 use FidelizeFood\Entity\RestauranteCampanha;
 use FidelizeFood\Controller\IndexController;
+
+//echo phpinfo();
+
+
 
 
 $CKey = Date("Y");
@@ -393,7 +399,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 	$sql  = "SELECT * FROM campanha ";
 	$sql .= "WHERE datainicial <= '" . Date("Y-m-d") . "' ";
 	$sql .= "AND datafinal >= '" . Date("Y-m-d") . "' ";
-	$sql .= "AND restaurante_idrestaurante = " . $rest->idrestaurante;
+	echo $sql .= "AND restaurante_idrestaurante = " . $rest->idrestaurante;
 	
 	$cam = \ADOdbConnection::getConn()->Execute($sql);
 	//var_dump($cam);
@@ -409,15 +415,17 @@ if($idx->getPostResponse("req") == "carimbo"){
 		$usucam = new UsuarioCampanha();
 		
 		//se nao existe um registro nesta tabela, insere, se não adiciona o item no registro ja existente
-		if(!$usucam->Load("idrestaurantefk = " . $rest->idrestaurante . " AND utilizado = false AND idusuariofk = " . $cliente->idusuario)){
+		if(!$usucam->Load("idrestaurantefk = " . $rest->idrestaurante . " AND utilizado IS NULL AND idusuariofk = " . $cliente->idusuario)){
 			
 			$usucam->idusuariocampanha = $usucam->nextId();
 			$usucam->idrestaurantefk = $rest->idrestaurante;
 			$usucam->idusuariofk = $cliente->idusuario;
-			$usucam->idcampanhafk = $cam->fields("idcampanha");
-			$usucam->utilizado = "f";
+			$usucam->idcampanhafk = $cam->fields("idCampanha");
+			//$usucam->utilizado = "f";
 			
 			$usucam->Save();
+
+			var_dump($usucam);
 				
 		}
 		

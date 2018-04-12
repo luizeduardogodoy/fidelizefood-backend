@@ -18,7 +18,7 @@ class ConsumidorController extends Controller{
 				INNER JOIN restaurante b ON b.idrestaurante = a.idrestaurantefk
 				INNER JOIN campanha c ON c.idcampanha = a.idcampanhafk
 				INNER JOIN usuariocampanhaitem d ON a.idusuariocampanha = d.idusuariocampanhafk
-				WHERE idusuariofk = " . $id . " AND utilizado = false			
+				WHERE idusuariofk = " . $id . " AND utilizado IS NULL			
 				GROUP BY  a.idusuariocampanha , nome, datainicial, datafinal, qtde
 				ORDER BY a.idusuariocampanha";
 	
@@ -69,7 +69,7 @@ class ConsumidorController extends Controller{
 				INNER JOIN restaurante b ON b.idrestaurante = a.idrestaurantefk
 				INNER JOIN campanha c ON c.idcampanha = a.idcampanhafk
 				INNER JOIN usuariocampanhaitem d ON a.idusuariocampanha = d.idusuariocampanhafk
-				WHERE utilizado = false
+				WHERE utilizado IS NULL
 				AND a.idusuariocampanha = ".$this->getPostResponse("idUsuarioCampanha")."
 				ORDER BY d.data";
 				//João
