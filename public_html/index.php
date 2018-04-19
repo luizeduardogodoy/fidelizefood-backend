@@ -78,15 +78,16 @@ if($idx->getPostResponse("req") == "cadastrouser"){
 if($idx->getPostResponse("req") == "cadastrorestaurant"){
 	
 	if($idx->createRestaurant()){
-		$dados = ["status" => "ok"];		
+		$dados = ["status" => "ok", "acao" => "cadastro"];		
 	}
 	else
-		$dados = ["status" => "!ok"];	
+		$dados = ["status" => "!ok", "acao" => "cadastro"];	
 
 	print json_encode($dados);
 
 	exit;
 }
+
 
 /***CADASTRO RESTAURANTE CAMPANHA***/
 if($idx->getPostResponse("req") == "cadastrocampanha"){
@@ -111,7 +112,7 @@ if($idx->getPostResponse("req") == "cadastrocampanha"){
 		$restcam->restaurante_idrestaurante = $rest->idrestaurante;
 		
 		$restcam->Save();
-		var_dump($restcam);
+		//var_dump($restcam);
 		$dados = ["status" => "ok"];	
 	}
 	catch(Exception $e){
@@ -133,17 +134,31 @@ if($idx->getPostResponse("req") == "consultacampanha"){
 		print json_encode($dados);		
 		exit;
 	}
+
+	/*verifica se tem campanha ativa*/
+	$sql  = "SELECT * FROM campanha ";
+	$sql .= "WHERE datainicial <= '" . Date("Y-m-d") . "' ";
+	$sql .= "AND datafinal >= '" . Date("Y-m-d") . "' ";
+	$sql .= "AND restaurante_idrestaurante = " . $rest->idrestaurante;
+
+	$cam = \ADOdbConnection::getConn()->Execute($sql);
+
+	$idcampanha = null;
+	if(!$cam->EOF){
+
+		$idcampanha = $cam->fields("idcampanha");
+	}
 	
 	// Recuperando informacoes da campanha
 	$restCampanha = new Campanha();
-	if(!$restCampanha->Load("restaurante_idrestaurante = " . $rest->idrestaurante)){
+	if(!$restCampanha->Load("idcampanha = " . $idcampanha)){
 		$dados = ["status" => "!restauranteCampanha"];		
 		print json_encode($dados);
 		exit;
 	}
 	
 	// iterando no resultado e adicionando as informacoes para retorno via json
-	if(!$restCampanha->EOF){
+	if($restCampanha->idcampanha != ""){
 		$dados["idcampanha"] = $restCampanha->idcampanha;
 		$dados["idrestaurante"] = $rest->idrestaurante;
 		$dados["nomecampanha"] = $restCampanha->nomecampanha;
@@ -299,7 +314,7 @@ if($idx->getPostResponse("req") == "atualizarcampanha"){
 /*Verifica se o user logado ja tem restaurante informado, isso so vale para user do tipo == 2*/
 if($idx->getPostResponse("req") == "consultarestaurante"){
 	
-	$dados = ["status" => "!ok"];	
+	$dados = ["status" => "!ok", "acao" => "consulta"];	
 	
 	// Pega o restaurante
 	$rest = new Restaurante();
@@ -401,7 +416,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 		$usucam = new UsuarioCampanha();
 		
 		$where  = "idcampanhafk = " . $cam->fields('idcampanha');
-		$where .= "AND utilizado IS NULL "; 
+		$where .= " AND utilizado IS NULL "; 
 		$where .= "AND idusuariofk = " . $cliente->idusuario;
 		
 		//se nao existe um registro nesta tabela, insere, se não adiciona o item no registro ja existente
