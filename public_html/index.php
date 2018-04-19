@@ -375,7 +375,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 	
 	$rest = new Restaurante();
 	if(!$rest->Load("usuario_idusuario = " . $idx->getPostResponse("UsuarioID"))){
-		print $dados["status"] = "!restaurante";		
+		print json_encode($dados["status"] = "!restaurante");		
 		exit;
 	}
 	
