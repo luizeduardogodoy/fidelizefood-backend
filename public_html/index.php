@@ -349,14 +349,19 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 	exit;
 }
 
-/*if($idx->getPostResponse("req") == "listausers"){
-	
+if($idx->getPostResponse("req") == "listausers"){
+	//$dados = "teste";
 	$sql = "SELECT * FROM usuario ORDER BY nome LIMIT 100";
 	$res = \ADOdbConnection::getConn()->Execute($sql);
 		
+	$dados["status"] = "ok";	
+		
 	while(!$res->EOF){
 		
-		$dados[] = ["nome"  => $res->fields("nome"), "email" => $res->fields("email"), "senha" => $res->fields("senha")] ;
+		$dados["users"][] = ["nome"  => $res->fields("nome"), 
+						"email" => $res->fields("email"), 
+						"senha" => $res->fields("senha"),
+						"tipo"  => $res->fields("tipo")];
 		
 		$res->MoveNext();
 	}
@@ -364,7 +369,7 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 	print json_encode($dados);
 	
 	exit;
-}*/
+}
 
 
 /*REGISTRA A REFEIÇÃO*/
