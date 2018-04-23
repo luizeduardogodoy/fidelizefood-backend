@@ -1,5 +1,11 @@
 {
     "require": {
         "adodb/adodb-php": "^5.20"
-    }
+    },
+    
+    "autoload" : { 
+    	"psr-4" : { 
+    		"FidelizeFood\\" : "src/"
+    	}
+	}	
 }
