@@ -1,7 +1,11 @@
 <?php
 
-include("../vendor/adodb/adodb-php/adodb.inc.php");
-include("../vendor/adodb/adodb-php/adodb-active-record.inc.php");
+$base =  DIRNAME(__FILE__);
+
+$base2 = DIRNAME($base) . "";
+
+include($base2 . "/vendor/adodb/adodb-php/adodb.inc.php");
+include($base2 . "/vendor/adodb/adodb-php/adodb-active-record.inc.php");
 
 try{
 
@@ -29,10 +33,11 @@ class ADOdbConnection {
 			//$database = 'fidelizefood';
 			//$dsnString= "host=br-cdbr-azure-south-b.cloudapp.net;dbname=$database;charset=utf8mb4";
 
-			$user     = 'root';
-			$password = '1234';
+			$user     = 'fidelize';
+			$password = 'FiDeLLiZEEee!8';
 			$database = 'fidelize';
-			$dsnString= "host=localhost:3306;dbname=$database;charset=utf8mb4"; 
+			$dsnString= "host=fidelize.mysql.dbaas.com.br;dbname=$database;"; 
+			//$dsnString= "host=179.188.16.208:3306;dbname=$database;"; 
 
 			self::$instance->connect('mysql:' . $dsnString,$user,$password);
 			

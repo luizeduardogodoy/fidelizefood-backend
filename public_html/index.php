@@ -349,6 +349,9 @@ if($idx->getPostResponse("req") == "consultarestaurante"){
 	exit;
 }
 
+
+
+
 if($idx->getPostResponse("req") == "listausers"){
 	//$dados = "teste";
 	$sql = "SELECT * FROM usuario ORDER BY nome LIMIT 100";
@@ -615,4 +618,40 @@ if($idx->getPostResponse("req") == "verificaemail"){
 	}
 	
 	exit;
+}
+
+if($idx->getPostResponse("req") == "relClientes"){
+	
+	$sql = "SELECT b.nome, e.nome as nomecliente, e.email, max(f.data) as ultima,
+			MAX(idusuariocampanhaitem) as maxidusuariocampanhaitem
+			FROM usuario a
+			INNER JOIN restaurante b ON a.idusuario = b.usuario_idusuario
+			INNER JOIN campanha c ON c.restaurante_idrestaurante = b.idrestaurante
+			INNER JOIN usuariocampanha d ON d.idcampanhafk = c.idcampanha
+			INNER JOIN usuario e ON d.idusuariofk = e.idusuario
+			INNER JOIN usuariocampanhaitem f ON f.idusuariocampanhafk = d.idusuariocampanha
+			WHERE a.idusuario =  " . $idx->getPostResponse("UsuarioID") . "
+			GROUP BY a.nome, e.nome, e.email
+			ORDER by maxidusuariocampanhaitem DESC ";
+	
+			
+	$res = \ADOdbConnection::getConn()->Execute($sql);
+	
+	$dados["status"] = "ok";
+	
+	while(!$res->EOF){
+		
+		$ultima = explode("-", $res->fields("ultima"));
+		$ultima = $ultima[2] . "/" . $ultima[1] . "/" . substr($ultima[0],2,3);
+		
+		$dados["users"][] = array("nomecliente" => $res->fields("nomecliente"),
+										  "email" =>  $res->fields("email"),
+										  "ultima" => $ultima);
+	
+	
+		$res->MoveNext();
+	}
+	
+	print json_encode($dados);
+	
 }
