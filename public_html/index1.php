@@ -521,7 +521,7 @@ if($idx->getPostResponse("req") == "listarCarimbosPart"){
 
 /*Funcionalidade para registrar o premio concedido*/
 
-if($idx->getPostResponse("req") == "premio"){
+if($idx->getPostResponse("req") == "premi0"){
 	
 	$dados = ["status" => "!ok"];	
 	
