@@ -12,7 +12,6 @@ use FidelizeFood\Entity\Campanha;
 use FidelizeFood\Controller\IndexController;
 
 //inclui header html com o bootstrap
-include "../../src/Template/head.html";
 
 //faz o login
 if(isset($_POST) && count($_POST) > 0){
@@ -37,16 +36,18 @@ if(isset($_POST) && count($_POST) > 0){
 			
 			Header("Location: main.php");
 		}else{
-			Echo "usu√°rio n√£o encontrado!";
+			Echo "usu·rio n„oo encontrado!";
 		}
 	}
 	else{
-		Echo "usu√°rio n√£o encontrado!";
+		Echo "usu·rio n„o encontrado!";
 	}
 		
 
 	exit; 
 	
 }
+
+require "../../src/Template/head.html";
 
 include("../../src/Template/index.html");

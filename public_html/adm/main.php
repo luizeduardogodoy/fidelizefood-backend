@@ -4,8 +4,6 @@ require "../../config/session.php";
 require "../../config/autoload.php";
 require "../../config/connect.php";
 
-//inclui header html com o bootstrap
-include "../../src/Template/head.html";
 
 use FidelizeFood\Entity\Usuario;
 use FidelizeFood\Entity\UsuarioCampanha;
@@ -14,13 +12,16 @@ use FidelizeFood\Entity\Restaurante;
 use FidelizeFood\Entity\Campanha;
 use FidelizeFood\Controller\IndexController;
 
+//inclui header html com o bootstrap
+include "../../src/Template/head.html";
+
 $usu = new Usuario();
 $usu->Load("idusuario = ?", $_SESSION["UsuarioID"] );
 
-echo "
-<div class=''><h1>Fidelizefood</h1>";
+echo '<div class="container">';
+//echo "<div class=''><h1></h1>";
 echo "<hr>";
-echo "<h3><b>" . $usu->nome . "</b>, seja bem vindo!</h3>";
+echo "<h3><b>" . $usu->nome . "</b>, seja bem vindo!</h3><br />";
 
 echo "<h4>Lista de Clientes</h4> ";
 
@@ -42,11 +43,11 @@ if($usu->idusuario != ""){
 	
 	$dados["status"] = "ok";
 	
-	echo "<table class='table  table-striped table-dark'> ";
-	echo "<thead ><tr>";
+	echo "<table class='table'> ";
+	echo "<thead class='thead-dark' ><tr>";
 	echo "<th>Nome</th>";
 	echo "<th>Email</th>";
-	echo "<th>Ultima Refeicao</th></tr></thead></tbdoy>";
+	echo "<th>Última Refeicao</th></tr></thead></tbdoy>";
 	
 	while(!$res->EOF){
 		echo "<tr><td>" . $res->fields("nomecliente") . "</td> ";
@@ -62,3 +63,8 @@ if($usu->idusuario != ""){
 	echo "</tbody>";
 	echo "</table></div>";
 }
+echo '</div>';
+
+
+//inclui header html com o bootstrap
+include "../../src/Template/foot.html";
