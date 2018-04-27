@@ -36,7 +36,7 @@ if(isset($_POST) && count($_POST) > 0){
 			
 			Header("Location: main.php");
 		}else{
-			Echo "usuário nãoo encontrado!";
+			Echo "usuário não encontrado!";
 		}
 	}
 	else{
@@ -48,6 +48,6 @@ if(isset($_POST) && count($_POST) > 0){
 	
 }
 
-require "../../src/Template/head.html";
+//require "../../src/Template/head.html";
 
 include("../../src/Template/index.html");
