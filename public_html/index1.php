@@ -465,6 +465,8 @@ if($idx->getPostResponse("req") == "carimbo"){
 				$dados["mensagem"] = "Já foi carimbado hoje!!";
 					
 				$dados["status"] = "ok";
+
+				unset($dados["idnotificacao"]);
 			}
 			else{
 			
@@ -483,6 +485,7 @@ if($idx->getPostResponse("req") == "carimbo"){
 		else{
 			$dados["mensagem"] = "Cliente atingiu o total de refeições permitido na campanha";
 			$dados["status"] = "ok";
+			unset($dados["idnotificacao"]);
 		}	
 	}
 	catch(Exception $e){
@@ -537,12 +540,18 @@ if($idx->getPostResponse("req") == "premi0"){
 			print json_encode($dados);
 			
 			exit;		
-		}		
+		}
+		else{
+			$dados["nome"] = $cliente->nome;
+
+			if($cliente->idnotificacao != "")
+				$dados["idnotificacao"] = $cliente->idnotificacao;
+		}
 		
 		/*pega o restaurante*/
 		
 		$rest = new Restaurante();
-		if(!$rest->Load("usuario_idusuario = " . $_SESSION["UsuarioID"])){
+		if(!$rest->Load("usuario_idusuario = " . $idx->getPostResponse("UsuarioID"))){
 			print $dados = ["status" => "!restaurante"];		
 			exit;
 		}
@@ -564,7 +573,7 @@ if($idx->getPostResponse("req") == "premi0"){
 		$cam_qtde = $cam->fields("qtde");
 		
 		$usucam = new UsuarioCampanha();
-		$usucam->Load("idusuariofk = " . $cliente->idusuario . " AND idcampanhafk = " . $cam->fields("idCampanha") . " AND utilizado IS NULL");
+		$usucam->Load("idusuariofk = " . $cliente->idusuario . " AND idcampanhafk = " . $cam->fields("idcampanha") . " AND utilizado IS NULL");
 		
 		if($usucam->idusuariocampanha != ""){
 			$sql = "SELECT count(*) AS qtde, max(data) AS ult_ref FROM usuariocampanhaitem WHERE idusuariocampanhafk = " . $usucam->idusuariocampanha;
